@@ -11,22 +11,24 @@ PFont font;
 PImage img;
 String prompt = "Finding Match...";
 String m = "Match Found";
-int roll;
+String title = "Biometric Attendance";
+int roll = 1;
+int present = 15, absent = 5, total_days;
 String attendance = "";
 char att[];
 
 
 
 void setup() {
-  fullScreen();
-  background(236);
-  font = loadFont("Ubuntu-Light-48.vlw");
-  textFont(font, 48);
-  fill(72);
+  size(900, 600);
+  background(0);
+  font = loadFont("Ubuntu-24.vlw");
+  textFont(font, 24);
+  fill(200);
   text(prompt, width/2 - prompt.length()*12, height/2 - 24);
   
   client = new MQTTClient(this);
-  client.connect("tcp://192.168.0.120", "processing");
+  client.connect("tcp://192.168.0.104", "processing");
   client.subscribe("roll");
   
   ///////////////////////////////
@@ -39,6 +41,7 @@ void setup() {
     }
   }
   att = attendance.toCharArray();
+  drawMatch(1);
 }
 
 void draw() {
@@ -51,16 +54,68 @@ void messageReceived(String topic, byte[] payload) {
 }
 
 void drawMatch(int roll) {
-  background(236);
-  text(m, width/2 - m.length()*12, 100);
-  String ImageName = Integer.toString(roll) + ".png";
+  background(255);
+  noStroke();
+  fill(63, 81, 181);
+  rect(0,0,width,82);
+  fill(255);
+  text(title, 100, 50);
+  fill(220);
+  rect(0,82,200,height-82);
+  font = loadFont("Ubuntu-Bold-24.vlw");
+  textFont(font, 24);
+  fill(56, 142, 60);
+  text(m, 230, 120);
+  fill(70);
+  font = loadFont("Ubuntu-Bold-24.vlw");
+  textFont(font, 16);
+  text("Name", 30, 170);
+  text("Roll", 30, 200);
+  text("Year", 30, 230);
+  text("Total Present", 30, 260);
+  text("Total Absent", 30, 290);
+  text("Attendance", 30, 320);
+  String ImageName = Integer.toString(roll) + ".jpg";
   img = loadImage(ImageName);
-  image(img, width/2 - 72, height/2 - 200, 144, 180);
+  image(img, width - 250, 30, 200, 200);
+  img = loadImage("dna.png");
+  fill(240);
+  noStroke();
+  ellipse(55,40,50, 50);
+  image(img, 35, 20, 40, 40);
+  noFill();
+  stroke(255);
+  strokeWeight(100);
+  ellipse(width - 150, 130, 300, 300);
   String name = parseFile();
-  text(name, width/2 - name.length()*10, 500);
+  fill(156, 39, 176);
+  text(name, 230, 170);
+  fill(70);
+  text("SH-073-002", 230, 200);
+  text("3rd Year, 2nd Semester", 230, 230); 
+  fill(76, 175, 80);
+  text(present, 230, 260);
+  fill(255, 87, 34);
+  text(absent, 230, 290);
+  fill(63, 81, 181);
+  text("80%", 230, 320);
   //////////////////////////////////////////////
   int index = (roll-1) * 2 + 11;
   att[index] = '1';
+  //////////////////////////////////////////////
+  total_days = present + absent;
+  int p_bar = (present*200)/total_days;
+  float a_bar = (absent*200)/total_days;
+  fill(76, 175, 80);
+  noStroke();
+  rect(370, height - p_bar - 50, 100, p_bar);
+  fill(255, 152, 0);
+  rect(500, height - a_bar - 50, 100, a_bar);
+  fill(120);
+  font = loadFont("Ubuntu-Bold-24.vlw");
+  textFont(font, 12);
+  text("Present", 400, height - 30);
+  text("Absent", 530, height - 30);
 }
 
 String parseFile() {
