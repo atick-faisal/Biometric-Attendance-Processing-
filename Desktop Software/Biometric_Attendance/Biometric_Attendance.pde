@@ -29,19 +29,20 @@ void setup() {
   drawInitialPrompt();
   _init_attendance_();
   connect();
-  matchFound(3);
+  //matchFound(3);
 }
 
 void draw() {
   //----------nothing here------------//
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////
 void messageReceived(String topic, byte[] payload) {
   println("new message: " + topic + " - " + new String(payload));
   roll = Integer.parseInt(new String(payload));
   matchFound(roll);
 }
-
+//////////////////////////////////////////////////////////////////////////////////////////////////////
 void matchFound(int roll) {
   //------------blue border---------------//
   background(255);
@@ -127,11 +128,9 @@ void matchFound(int roll) {
   //////////////////////////////////////////////
   int index = (roll-1) * 2 + 11;
   att[index] = '1';
-  //////////////////////////////////////////////
-  
-  
+  ////////////////////////////////////////////// 
 }
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
 String getStudentName(int r) {
   BufferedReader reader = createReader("name_roll.csv");
   String line = null;
@@ -220,7 +219,7 @@ int getTotal() {
   }
   return counter;
 }
-
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void mouseClicked() {
   try {
     File file =new File(sketchPath() + "/data/attendance.csv");

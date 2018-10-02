@@ -1,5 +1,8 @@
-////////////////////////// Atick Faisal /////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+//---------------------------Atick Faisal, 2018-----------------------------//
+//////////////////////////////////////////////////////////////////////////////
 
+#include <Arduino.h>
 #include <Adafruit_Fingerprint.h>
 #include <SoftwareSerial.h>
 
@@ -8,6 +11,7 @@ SoftwareSerial mySerial(14, 12, false, 256);
 Adafruit_Fingerprint finger = Adafruit_Fingerprint(&mySerial);
 
 uint8_t id;
+uint8_t getFingerprintEnroll();
 
 void setup()  
 {
@@ -15,10 +19,7 @@ void setup()
   while (!Serial);
   delay(100);
   Serial.println("\n\nFingerprint sensor enrollment");
-
-  // set the data rate for the sensor serial port
   finger.begin(57600);
-  
   if (finger.verifyPassword()) {
     Serial.println("Found fingerprint sensor!");
   } else {
@@ -37,18 +38,18 @@ uint8_t readnumber(void) {
   return num;
 }
 
-void loop()                     // run over and over again
+void loop()                     
 {
   Serial.println("Ready to enroll a fingerprint!");
   Serial.println("Please type in the Roll # (from 1 to 127) you want to save this finger as...");
   id = readnumber();
-  if (id == 0) {// ID #0 not allowed, try again!
+  if (id == 0) {
      return;
   }
   Serial.print("Enrolling Roll #");
   Serial.println(id);
   
-  while (!  getFingerprintEnroll() );
+  while (!getFingerprintEnroll());
 }
 
 uint8_t getFingerprintEnroll() {
@@ -75,8 +76,6 @@ uint8_t getFingerprintEnroll() {
       break;
     }
   }
-
-  // OK success!
 
   p = finger.image2Tz(1);
   switch (p) {
@@ -130,8 +129,6 @@ uint8_t getFingerprintEnroll() {
     }
   }
 
-  // OK success!
-
   p = finger.image2Tz(2);
   switch (p) {
     case FINGERPRINT_OK:
@@ -154,7 +151,6 @@ uint8_t getFingerprintEnroll() {
       return p;
   }
   
-  // OK converted!
   Serial.print("Creating model for #");  Serial.println(id);
   
   p = finger.createModel();

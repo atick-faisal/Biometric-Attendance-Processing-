@@ -1,11 +1,19 @@
+//////////////////////////////////////////////////////////////////////////////////////
+//-----------------------------Atick Faisal, 2018-----------------------------------//
+//////////////////////////////////////////////////////////////////////////////////////
+
+#include <Arduino.h>
 #include <Adafruit_Fingerprint.h>
 #include <SoftwareSerial.h>
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
 
-const char* ssid = "Fab Lab DU";
-const char* password = "FABinvent";
-const char* mqtt_server = "192.168.0.120";
+void setup_wifi();
+int getFingerprintIDez();
+
+const char* ssid = "Free WiFi";
+const char* password = "1988acca";
+const char* mqtt_server = "192.168.0.104";
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -17,6 +25,8 @@ Adafruit_Fingerprint finger = Adafruit_Fingerprint(&mySerial);
 
 void setup()  
 {
+  pinMode(16, OUTPUT);
+  pinMode(5, OUTPUT);
   Serial.begin(115200);
   while (!Serial);
   delay(100);
@@ -56,7 +66,6 @@ void setup_wifi() {
 void reconnect() {
   while (!client.connected()) {
     Serial.print("Attempting MQTT connection...");
-    // Attempt to connect
     if (client.connect("ESP8266Client")) {
       Serial.println("connected");
       client.publish("topic", "Hi");
@@ -70,6 +79,7 @@ void reconnect() {
 }
 
 void loop() {
+  digitalWrite(16, HIGH);
   if (!client.connected()) {
     reconnect();
   }
@@ -147,11 +157,18 @@ int getFingerprintIDez() {
 
   p = finger.fingerFastSearch();
   if (p != FINGERPRINT_OK)  return -1;
-  
+  /////////////////////////////////////////////////////////////////////
+  digitalWrite(16, LOW);
+  digitalWrite(5, HIGH);
   /////////////////////////////////////////////////////////////////////
   Serial.print("Found ID #"); Serial.print(finger.fingerID); 
   Serial.print(" with confidence of "); Serial.println(finger.confidence);
   snprintf (msg, 75, "%u", finger.fingerID);
   client.publish("roll", msg);
+  delay(1000);
+  digitalWrite(5,LOW);
+  delay(1000);
+  digitalWrite(16, HIGH);
+  /////////////////////////////////////////////////////////////////////
   return finger.fingerID; 
 }

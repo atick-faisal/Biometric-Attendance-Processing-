@@ -1,10 +1,19 @@
+/////////////////////////////////////////////////////////////////////
+//--------------------------Atick Faisal, 2018---------------------//
+/////////////////////////////////////////////////////////////////////
+
+#include <Arduino.h>
 #include <Adafruit_Fingerprint.h>
 #include <SoftwareSerial.h>
 #include <ESP8266WiFi.h>
 #include <FirebaseArduino.h>
+#include <ESP8266HTTPClient.h>
+#include<ESP8266WebServer.h>
 
-#define FIREBASE_HOST "nodemcu-data-logging.firebaseio.com"
-#define FIREBASE_AUTH "74VVVprVqzrYFTjyuRhbzgxb31yWzo8a8r3hotJN"
+void printHex(int num, int precision);
+
+#define FIREBASE_HOST "biometric-attendance-b3530.firebaseio.com"
+#define FIREBASE_AUTH "EkoiWPvTFZnT1cog0YmhtIJHOpdoR8rbngtqGoXA"
 #define WIFI_SSID "Free WiFi"
 #define WIFI_PASSWORD "1988acca"
 
