@@ -1,3 +1,7 @@
+////////////////////////////////////////////////////////////////////////////////////////////////
+//-------------------------------------Atick Faisal, 2018-------------------------------------//
+////////////////////////////////////////////////////////////////////////////////////////////////
+
 import mqtt.*;
 import java.io.FileWriter;
 import java.io.*;
@@ -14,6 +18,7 @@ String m = "Match Found";
 String title = "Biometric Attendance";
 int roll = 1;
 int present = 15, absent = 5, total_days;
+float prcnt = 0;
 String attendance = "";
 char att[];
 
@@ -21,89 +26,92 @@ char att[];
 
 void setup() {
   size(900, 600);
-  background(0);
-  font = loadFont("Ubuntu-24.vlw");
-  textFont(font, 24);
-  fill(200);
-  text(prompt, width/2 - prompt.length()*12, height/2 - 24);
-  
-  client = new MQTTClient(this);
-  client.connect("tcp://192.168.0.104", "processing");
-  client.subscribe("roll");
-  
-  ///////////////////////////////
-  attendance = attendance + String.format("%02d", day()) + "/" + String.format("%02d", month()) + "/" + String.format("%04d", year()) + ","; 
-  for(int i=1; i<=5; i++) {
-    if(i == 5) {
-      attendance += "0\n";
-    } else {
-      attendance += "0,";
-    }
-  }
-  att = attendance.toCharArray();
-  drawMatch(1);
+  drawInitialPrompt();
+  _init_attendance_();
+  connect();
+  matchFound(3);
 }
 
 void draw() {
+  //----------nothing here------------//
 }
 
 void messageReceived(String topic, byte[] payload) {
   println("new message: " + topic + " - " + new String(payload));
   roll = Integer.parseInt(new String(payload));
-  drawMatch(roll);
+  matchFound(roll);
 }
 
-void drawMatch(int roll) {
+void matchFound(int roll) {
+  //------------blue border---------------//
   background(255);
   noStroke();
   fill(63, 81, 181);
   rect(0,0,width,82);
+  //-------------title-------------//
   fill(255);
+  font = loadFont("Ubuntu-24.vlw");
+  textFont(font, 24);
   text(title, 100, 50);
+  //--------------side bar---------------//
   fill(220);
   rect(0,82,200,height-82);
+  fill(90);
+  font = loadFont("Ubuntu-Bold-16.vlw");
+  textFont(font, 16);
+  text("Name", 30, 170);
+  text("Roll", 30, 195);
+  text("Year", 30, 220);
+  text("Total Present", 30, 245);
+  text("Total Absent", 30, 270);
+  text("Attendance", 30, 295);
+  fill(63, 81, 181);
+  rect(10, height - 70, 180, 50);
+  fill(255);
+  font = loadFont("Ubuntu-Bold-16.vlw");
+  textFont(font, 16);
+  text("Save and Exit", 42, height - 40);
+  //--------------match found---------------//
   font = loadFont("Ubuntu-Bold-24.vlw");
   textFont(font, 24);
   fill(56, 142, 60);
-  text(m, 230, 120);
-  fill(70);
-  font = loadFont("Ubuntu-Bold-24.vlw");
-  textFont(font, 16);
-  text("Name", 30, 170);
-  text("Roll", 30, 200);
-  text("Year", 30, 230);
-  text("Total Present", 30, 260);
-  text("Total Absent", 30, 290);
-  text("Attendance", 30, 320);
+  text(m, 230, 120); 
+  //---------------image---------------//
   String ImageName = Integer.toString(roll) + ".jpg";
   img = loadImage(ImageName);
   image(img, width - 250, 30, 200, 200);
+  noFill();
+  stroke(255);
+  strokeWeight(100);
+  ellipse(width - 150, 130, 300, 300);
+  //---------------icon---------------//
   img = loadImage("dna.png");
   fill(240);
   noStroke();
   ellipse(55,40,50, 50);
   image(img, 35, 20, 40, 40);
-  noFill();
-  stroke(255);
-  strokeWeight(100);
-  ellipse(width - 150, 130, 300, 300);
-  String name = parseFile();
+  //-------------student info--------------//
+  font = loadFont("Ubuntu-Bold-16.vlw");
+  textFont(font, 16);
+  String name = getStudentName(roll);
+  String fullRoll = getStudentRoll(roll);
+  String year = getStudentYear(roll);
   fill(156, 39, 176);
   text(name, 230, 170);
   fill(70);
-  text("SH-073-002", 230, 200);
-  text("3rd Year, 2nd Semester", 230, 230); 
+  text(fullRoll, 230, 195);
+  text(year, 230, 220); 
   fill(76, 175, 80);
-  text(present, 230, 260);
+  present = getPresent(roll);
+  text(present, 230, 245);
   fill(255, 87, 34);
-  text(absent, 230, 290);
+  absent = getTotal() - present;
+  text(absent, 230, 270);
   fill(63, 81, 181);
-  text("80%", 230, 320);
-  //////////////////////////////////////////////
-  int index = (roll-1) * 2 + 11;
-  att[index] = '1';
-  //////////////////////////////////////////////
   total_days = present + absent;
+  prcnt = (present*100) / total_days;
+  text(prcnt + "%", 230, 295);
+  //-----------------chart---------------//
   int p_bar = (present*200)/total_days;
   float a_bar = (absent*200)/total_days;
   fill(76, 175, 80);
@@ -116,17 +124,23 @@ void drawMatch(int roll) {
   textFont(font, 12);
   text("Present", 400, height - 30);
   text("Absent", 530, height - 30);
+  //////////////////////////////////////////////
+  int index = (roll-1) * 2 + 11;
+  att[index] = '1';
+  //////////////////////////////////////////////
+  
+  
 }
 
-String parseFile() {
+String getStudentName(int r) {
   BufferedReader reader = createReader("name_roll.csv");
   String line = null;
   try {
     while ((line = reader.readLine()) != null) {
       String[] pieces = split(line, ",");
       int x = int(pieces[0]);
-      String y = pieces[1];
-      if(x == roll) {
+      String y = pieces[2];
+      if(x == r) {
         return y;
       }
     }
@@ -136,10 +150,80 @@ String parseFile() {
   }
   return "";
 }
-
-void keyPressed() {
+////////////////////////////////////////////////////////////////////////////////////////////////
+String getStudentRoll(int r) {
+  BufferedReader reader = createReader("name_roll.csv");
+  String line = null;
   try {
-    File file =new File("/home/andromeda/Desktop/attendance.csv");
+    while ((line = reader.readLine()) != null) {
+      String[] pieces = split(line, ",");
+      int x = int(pieces[0]);
+      String y = pieces[1];
+      if(x == r) {
+        return y;
+      }
+    }
+    reader.close();
+  } catch (IOException e) {
+    e.printStackTrace();
+  }
+  return "";
+}
+////////////////////////////////////////////////////////////////////////////////////////////////
+String getStudentYear(int r) {
+  BufferedReader reader = createReader("name_roll.csv");
+  String line = null;
+  try {
+    while ((line = reader.readLine()) != null) {
+      String[] pieces = split(line, ",");
+      int x = int(pieces[0]);
+      String y = pieces[3];
+      if(x == r) {
+        return y;
+      }
+    }
+    reader.close();
+  } catch (IOException e) {
+    e.printStackTrace();
+  }
+  return "";
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////
+int getPresent(int r) {
+  BufferedReader reader = createReader("attendance.csv");
+  int present = 0;
+  String line = null;
+  try {
+    while ((line = reader.readLine()) != null) {
+      String[] pieces = split(line, ",");
+      int x = int(pieces[r]);
+      present += x;
+    }
+    reader.close();
+  } catch (IOException e) {
+    e.printStackTrace();
+  }
+  return present;
+}
+//////////////////////////////////////////////////////////////////////////////////////////////////
+int getTotal() {
+  BufferedReader reader = createReader("attendance.csv");
+  int counter = 0;
+  String line = null;
+  try {
+    while ((line = reader.readLine()) != null) {
+      counter++;
+    }
+    reader.close();
+  } catch (IOException e) {
+    e.printStackTrace();
+  }
+  return counter;
+}
+
+void mouseClicked() {
+  try {
+    File file =new File(sketchPath() + "/data/attendance.csv");
  
     if (!file.exists()) {
       file.createNewFile();
@@ -153,9 +237,46 @@ void keyPressed() {
     pw.write(s);
  
     pw.close();
+    exit();
   }
   catch(IOException ioe) {
     System.out.println("Exception ");
     ioe.printStackTrace();
   }
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+void _init_attendance_() {
+  attendance = attendance + String.format("%02d", day()) + "/" + String.format("%02d", month()) + "/" + String.format("%04d", year()) + ","; 
+  for(int i=1; i<=5; i++) {
+    if(i == 5) {
+      attendance += "0\n";
+    } else {
+      attendance += "0,";
+    }
+  }
+  att = attendance.toCharArray();
+}
+///////////////////////////////////////////////////////////////////////////////////////////////////
+void connect() {
+  BufferedReader reader = createReader("ip.txt");
+  String line = null;
+  try {
+    line = reader.readLine();
+    reader.close();
+  } catch (IOException e) {
+    e.printStackTrace();
+  }
+  //////////////////////////////////////////////
+  client = new MQTTClient(this);
+  client.connect("tcp://" + line, "processing");
+  client.subscribe("roll");
+}
+///////////////////////////////////////////////////////////////////////////////////////////////////
+void drawInitialPrompt() {
+  background(255);
+  font = loadFont("Ubuntu-24.vlw");
+  textFont(font, 24);
+  fill(170);
+  text(prompt, width/2 - prompt.length()*6, height/2 + 150);
 }
