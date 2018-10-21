@@ -11,9 +11,9 @@
 void setup_wifi();
 int getFingerprintIDez();
 
-const char* ssid = "Free WiFi";
-const char* password = "1988acca";
-const char* mqtt_server = "192.168.0.104";
+const char* ssid = "Fab Lab DU";
+const char* password = "FABinvent";
+const char* mqtt_server = "192.168.0.133";
 
 WiFiClient espClient;
 PubSubClient client(espClient);

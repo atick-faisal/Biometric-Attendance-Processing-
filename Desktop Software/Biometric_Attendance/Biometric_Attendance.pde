@@ -29,7 +29,7 @@ void setup() {
   drawInitialPrompt();
   _init_attendance_();
   connect();
-  //matchFound(3);
+  //matchFound(1);
 }
 
 void draw() {
@@ -274,8 +274,10 @@ void connect() {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void drawInitialPrompt() {
   background(255);
+  img = loadImage("report.png");
+  image(img, 318, 120);
   font = loadFont("Ubuntu-24.vlw");
   textFont(font, 24);
-  fill(170);
+  fill(120);
   text(prompt, width/2 - prompt.length()*6, height/2 + 150);
 }
