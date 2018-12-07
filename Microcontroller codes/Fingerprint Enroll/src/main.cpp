@@ -12,7 +12,7 @@ Adafruit_Fingerprint finger = Adafruit_Fingerprint(&mySerial);
 
 uint8_t id;
 uint8_t getFingerprintEnroll();
-
+1
 void setup()  
 {
   Serial.begin(115200);

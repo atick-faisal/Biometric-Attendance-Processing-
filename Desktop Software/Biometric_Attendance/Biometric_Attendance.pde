@@ -21,6 +21,7 @@ int present = 15, absent = 5, total_days;
 float prcnt = 0;
 String attendance = "";
 char att[];
+String percentage = "";
 
 
 
@@ -28,8 +29,8 @@ void setup() {
   size(900, 600);
   drawInitialPrompt();
   _init_attendance_();
-  connect();
-  //matchFound(1);
+  //connect();
+  matchFound(2);
 }
 
 void draw() {
@@ -103,13 +104,16 @@ void matchFound(int roll) {
   text(fullRoll, 230, 195);
   text(year, 230, 220); 
   fill(76, 175, 80);
-  present = getPresent(roll);
+  present = getPresent(roll) + 1; /////<<<<<<<<----------
   text(present, 230, 245);
   fill(255, 87, 34);
-  absent = getTotal() - present;
+  absent = getTotal() - present + 1; ////////<<<<<<<-------
   text(absent, 230, 270);
   fill(63, 81, 181);
   total_days = present + absent;
+  //if(total_days == 0){ /////////////<<---------------
+  //  total_days = 1;
+  //}
   prcnt = (present*100) / total_days;
   text(prcnt + "%", 230, 295);
   //-----------------chart---------------//
@@ -242,11 +246,46 @@ void mouseClicked() {
     System.out.println("Exception ");
     ioe.printStackTrace();
   }
+  ///////////////////////////////////////////////////////////////////
+  for(int i=1; i<=5; i++){
+    int p = getPresent(i);
+    int a = getTotal() - p;
+    int ta = p + a;
+    if(ta == 0) {
+      ta = 1;
+    }
+    float pr = (p*100) / ta;
+    percentage = percentage + pr + "% ,";
+  }
+  percentage = percentage + "\n";
+  
+  try{
+    File file =new File(sketchPath() + "/data/percentage.csv");
+ 
+    if (!file.exists()) {
+      file.createNewFile();
+    }
+ 
+    FileWriter fw = new FileWriter(file, true);
+    BufferedWriter bw = new BufferedWriter(fw);
+    PrintWriter pw = new PrintWriter(bw);
+ 
+    pw.write(percentage);
+ 
+    pw.close();
+    exit();
+  }
+  catch(IOException ioe) {
+    System.out.println("Exception ");
+    ioe.printStackTrace();
+  }
+  ////////////////////////////////////////////////////
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 void _init_attendance_() {
   attendance = attendance + String.format("%02d", day()) + "/" + String.format("%02d", month()) + "/" + String.format("%04d", year()) + ","; 
+  percentage = percentage + String.format("%02d", day()) + "/" + String.format("%02d", month()) + "/" + String.format("%04d", year()) + ","; 
   for(int i=1; i<=5; i++) {
     if(i == 5) {
       attendance += "0\n";
