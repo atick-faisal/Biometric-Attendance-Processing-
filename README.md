@@ -2,17 +2,13 @@
 
 # Project Structure
 
+```bash
 .
 ├── Desktop Software
-
 │   ├── Biometric_Attendance
-
 │   │   ├── Biometric_Attendance.pde
-
 │   │   └── data
-
 │   │       ├── 1.jpg
-
 │   │       ├── 2.jpg
 │   │       ├── 3.jpg
 │   │       ├── 4.jpg
@@ -62,6 +58,7 @@
 │       └── src
 │           └── main.cpp
 └── README.md
+```
 
 ** Components Used :*
 
