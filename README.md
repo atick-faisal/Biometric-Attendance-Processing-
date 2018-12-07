@@ -1,5 +1,63 @@
 ## Biometric Attendance System
 
+# Project Structure
+
+.
+├── Desktop Software
+│   ├── Biometric_Attendance
+│   │   ├── Biometric_Attendance.pde
+│   │   └── data
+│   │       ├── 1.jpg
+│   │       ├── 2.jpg
+│   │       ├── 3.jpg
+│   │       ├── 4.jpg
+│   │       ├── 5.jpg
+│   │       ├── attendance.csv
+│   │       ├── dna.png
+│   │       ├── ip.txt
+│   │       ├── name_roll.csv
+│   │       ├── percentage.csv
+│   │       ├── report.png
+│   │       ├── Ubuntu-12.vlw
+│   │       ├── Ubuntu-14.vlw
+│   │       ├── Ubuntu-24.vlw
+│   │       ├── Ubuntu-Bold-14.vlw
+│   │       ├── Ubuntu-Bold-16.vlw
+│   │       ├── Ubuntu-Bold-24.vlw
+│   │       └── Ubuntu-Light-48.vlw
+│   └── Readme.txt
+├── LICENSE
+├── Microcontroller codes
+│   ├── Biometric Attendance
+│   │   ├── include
+│   │   │   └── README
+│   │   ├── lib
+│   │   │   └── README
+│   │   ├── platformio.ini
+│   │   ├── src
+│   │   │   └── main.cpp
+│   │   └── test
+│   │       └── README
+│   ├── Fingerprint Database
+│   │   ├── lib
+│   │   │   └── readme.txt
+│   │   ├── platformio.ini
+│   │   └── src
+│   │       └── main.cpp
+│   ├── Fingerprint Enroll
+│   │   ├── lib
+│   │   │   └── readme.txt
+│   │   ├── platformio.ini
+│   │   └── src
+│   │       └── main.cpp
+│   └── Fingerprint Testing
+│       ├── lib
+│       │   └── readme.txt
+│       ├── platformio.ini
+│       └── src
+│           └── main.cpp
+└── README.md
+
 ** Components Used :*
 
 1. Node MCU development board
