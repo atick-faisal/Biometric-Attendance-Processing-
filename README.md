@@ -1,6 +1,6 @@
-## Biometric Attendance System
+# Biometric Attendance System
 
-# Project Structure
+## Project Structure
 
 ```bash
 .
